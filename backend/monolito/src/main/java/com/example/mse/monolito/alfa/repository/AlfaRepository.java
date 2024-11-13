@@ -1,4 +1,4 @@
-package com.example.mse.monolito.alfa.infrastructure;
+package com.example.mse.monolito.alfa.repository;
 
 import com.example.mse.monolito.alfa.domain.Alfa;
 import org.springframework.data.jpa.repository.JpaRepository;

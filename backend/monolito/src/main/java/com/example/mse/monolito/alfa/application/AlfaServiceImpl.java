@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.mse.monolito.alfa.domain.Alfa;
 import com.example.mse.monolito.alfa.domain.AlfaService;
-import com.example.mse.monolito.alfa.infrastructure.AlfaRepository;
+import com.example.mse.monolito.alfa.repository.AlfaRepository;
 
 @Service
 public class AlfaServiceImpl implements AlfaService {

@@ -1,4 +1,4 @@
-package com.example.mse.monolito.alfa.infrastructure;
+package com.example.mse.monolito.alfa.controller;
 
 import java.util.List;
 
