@@ -1,9 +1,10 @@
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import GammaService from './GammaService.js';
+import AlfaService from './AlfaService.js';
 import ErrorMessagesComponent from './ErrorMessagesComponent.js';
 
 export default {
-    template: `
+  template: `
 
     <error-messages-component ref="errorMessagesRef"></error-messages-component>
 
@@ -21,6 +22,7 @@ export default {
           <th>texto</th>
           <th>entero</th>
           <th>decimal</th>
+          <th>alfa</th>
           <th>acciones</th>
         </tr>
       </thead>
@@ -30,6 +32,7 @@ export default {
           <td>{{ item.texto }}</td>
           <td>{{ item.entero }}</td>
           <td>{{ item.decimal }}</td>
+          <td>{{ item.alfa.id }}: {{ item.alfa.texto }}</td>
           <td>
             <button @click="openModificarItemDialog(item.id)">Modificar</button>
           </td>
@@ -45,8 +48,17 @@ export default {
         <fieldset>
           <label> Texto: <input type="text" v-model="currentItem.texto" /> </label> 
           <label> Entero: <input type="number" v-model="currentItem.entero" /> </label>
-          <label> Decimal: <input type="number" step="0.1" v-model="currentItem.decimal" /> </label> 
+          <label> Decimal: <input type="number" step="0.1" v-model="currentItem.decimal" /> </label>
         </fieldset>
+        <fieldset>
+					<legend>Alfa</legend>
+					<label> <select v-model="currentItem.alfa.id" @change="selectAlfa">
+							<option value="0">- Seleccionar -</option>
+							<option :value="item.id" v-for="item of alfaItems">
+                {{ item.id }}: {{ item.texto }}</option>
+						</select>
+					</label>
+				</fieldset>
         <footer>
           <button type="reset" @click="closeIngresarItemDialog">Cancelar</button>
           <button type="submit" @click.prevent="createItem">Guardar</button>
@@ -65,6 +77,15 @@ export default {
           <label> Entero: <input type="number" v-model="currentItem.entero" /> </label>
           <label> Decimal: <input type="number" step="0.1" v-model="currentItem.decimal" /> </label>
         </fieldset>
+        <fieldset>
+					<legend>Alfa</legend>
+					<label> <select v-model="currentItem.alfa.id" @change="selectAlfa">
+							<option value="0">- Seleccionar -</option>
+							<option :value="item.id" v-for="item of alfaItems">
+                {{ item.id }}: {{ item.texto }}</option>
+						</select>
+					</label>
+				</fieldset>
         <footer>
           <button type="reset" @click="closeModificarItemDialog">Cancelar</button>
           <button type="submit" @click.prevent="updateItem">Guardar</button>
@@ -73,99 +94,128 @@ export default {
     </dialog>
   `,
 
-    props: {
-        apiUrl: {
-            type: String,
-            required: true,
-        },
+  props: {
+    apiUrl: {
+      type: String,
+      required: true,
     },
-
-    components: {
-        ErrorMessagesComponent,
+    alfaApiUrl: {
+      type: String,
+      required: true,
     },
+  },
 
-    setup(props) {
-        const errorMessagesRef = ref(null);
-        
-        const items = ref([]);
-        const currentItem = ref({
-            id: 0,
-            texto: '',
-            entero: 0,
-            decimal: 0,
-        });
+  components: {
+    ErrorMessagesComponent,
+  },
 
-        const ingresarItemDialog = ref();
-        const modificarItemDialog = ref();
+  setup(props) {
+    const errorMessagesRef = ref(null);
 
-        const getItems = async () => {
-            try {
-                const { data } = await axios.get(props.apiUrl);
-                if (typeof data !== 'object') {
-                    throw new Error('Invalid data format');
-                }
-                items.value = data;
-            } catch (error) {
-                console.error('Failed to fetch items: ', error);
-                errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
-            }
-        };
+    const items = ref([]);
+    const currentItem = ref({
+      id: 0,
+      texto: '',
+      entero: 0,
+      decimal: 0,
+      alfa: {
+        id: 0,
+      },
+    });
 
-        const getItem = async (id) => {
-            try {
-                const { data } = await axios.get(`${props.apiUrl}/${id}`);
-                if (typeof data !== 'object') {
-                    throw new Error('Invalid data format');
-                }
-                currentItem.value = data;
-            } catch (error) {
-                console.error('Failed to fetch item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
-            }
-        };
+    const alfaItems = ref([]);
 
-        const createItem = async () => {
-            try {
-                await axios.post(props.apiUrl, currentItem.value);
-                getItems();
-            } catch (error) {
-                console.error('Failed to create item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
-            }
-        };
+    const ingresarItemDialog = ref();
+    const modificarItemDialog = ref();
 
-        const updateItem = async () => {
-            try {
-                await axios.put(`${props.apiUrl}/${currentItem.value.id}`, currentItem.value);
-                getItems();
-            } catch (error) {
-                console.error('Failed to update item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
-            }
-        };
+    const gammaService = GammaService(props.apiUrl);
+    const alfaService = AlfaService(props.alfaApiUrl);
 
-        const openIngresarItemDialog = () => ingresarItemDialog.value.showModal();
-        const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
+    const getItems = async () => {
+      try {
+        items.value = await gammaService.getItems();
+      } catch (error) {
+        console.error('Failed to fetch items: ', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
+      }
+    };
 
-        const openModificarItemDialog = async (id) => {
-            await getItem(id);
-            modificarItemDialog.value.showModal();
-        };
-        const closeModificarItemDialog = () => modificarItemDialog.value.close();
+    const getAlfaItems = async () => {
+      try {
+        alfaItems.value = await alfaService.getItems();
+      } catch (error) {
+        console.error('Failed to fetch items: ', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
+      }
+    };
 
-        return {
-            errorMessagesRef,
-            items,
-            currentItem,
-            getItems,
-            createItem,
-            updateItem,
-            openIngresarItemDialog,
-            closeIngresarItemDialog,
-            openModificarItemDialog,
-            closeModificarItemDialog,
-            ingresarItemDialog,
-            modificarItemDialog,
-        };
-    },
+    const selectAlfa = () => {
+			// nothing
+		};
+
+    const getItem = async (id) => {
+      try {
+        currentItem.value = await gammaService.getItem(id);
+      } catch (error) {
+        console.error('Failed to fetch item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
+      }
+    };
+
+    const createItem = async () => {
+      try {
+        await gammaService.createItem(currentItem.value);
+        getItems();
+        closeIngresarItemDialog();
+      } catch (error) {
+        console.error('Failed to create item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
+      }
+    };
+
+    const updateItem = async () => {
+      try {
+        await gammaService.updateItem(currentItem.value.id, currentItem.value);
+        getItems();
+        closeModificarItemDialog();
+      } catch (error) {
+        console.error('Failed to update item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
+      }
+    };
+
+    const openIngresarItemDialog = async () => {
+      await getAlfaItems();
+      ingresarItemDialog.value.showModal();
+    };
+    const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
+
+    const openModificarItemDialog = async (id) => {
+      await getAlfaItems();
+      await getItem(id);
+      modificarItemDialog.value.showModal();
+    };
+    const closeModificarItemDialog = () => modificarItemDialog.value.close();
+
+    onMounted(() => {
+      getItems();
+    });
+
+    return {
+      errorMessagesRef,
+      items,
+      currentItem,
+      alfaItems,
+      getItems,
+      getAlfaItems,
+      createItem,
+      updateItem,
+      openIngresarItemDialog,
+      closeIngresarItemDialog,
+      openModificarItemDialog,
+      closeModificarItemDialog,
+      ingresarItemDialog,
+      modificarItemDialog,
+    };
+  },
 };

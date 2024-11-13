@@ -20,7 +20,7 @@ const App = {
 	
 	<beta-component :api-url="betaApiUrl"/>
 
-	<gamma-component :api-url="gammaApiUrl"/>
+	<gamma-component :api-url="gammaApiUrl" :alfa-api-url="alfaApiUrl"/>
 
 	<footer>
 		<em><a href="https://github.com/akobashikawa/mse-generico" target="_blank">@GitHub></a></em>

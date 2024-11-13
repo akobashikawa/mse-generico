@@ -3,7 +3,7 @@ import AlfaService from './AlfaService.js';
 import ErrorMessagesComponent from './ErrorMessagesComponent.js';
 
 export default {
-    template: `
+  template: `
 
     <error-messages-component ref="errorMessagesRef"></error-messages-component>
 
@@ -73,99 +73,99 @@ export default {
     </dialog>
   `,
 
-    props: {
-        apiUrl: {
-            type: String,
-            required: true,
-        },
+  props: {
+    apiUrl: {
+      type: String,
+      required: true,
     },
+  },
 
-    components: {
-        ErrorMessagesComponent,
-    },
+  components: {
+    ErrorMessagesComponent,
+  },
 
-    setup(props) {
-        const errorMessagesRef = ref(null);
-        
-        const items = ref([]);
-        const currentItem = ref({
-          id: 0,
-          texto: '',
-          entero: 0,
-          decimal: 0,
-        });
+  setup(props) {
+    const errorMessagesRef = ref(null);
 
-        const ingresarItemDialog = ref();
-        const modificarItemDialog = ref();
+    const items = ref([]);
+    const currentItem = ref({
+      id: 0,
+      texto: '',
+      entero: 0,
+      decimal: 0,
+    });
 
-        const alfaService = AlfaService(props.apiUrl);
+    const ingresarItemDialog = ref();
+    const modificarItemDialog = ref();
 
-        const getItems = async () => {
-            try {
-              items.value = await alfaService.getItems();
-            } catch (error) {
-              console.error('Failed to fetch items: ', error);
-              errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
-            }
-        };
+    const alfaService = AlfaService(props.apiUrl);
 
-        const getItem = async (id) => {
-            try {
-              currentItem.value = await alfaService.getItem(id);
-            } catch (error) {
-              console.error('Failed to fetch item:', error);
-              errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
-            }
-        };
+    const getItems = async () => {
+      try {
+        items.value = await alfaService.getItems();
+      } catch (error) {
+        console.error('Failed to fetch items: ', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
+      }
+    };
 
-        const createItem = async () => {
-            try {
-              await alfaService.createItem(currentItem.value);
-              getItems();
-              closeIngresarItemDialog();
-            } catch (error) {
-              console.error('Failed to create item:', error);
-              errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
-            }
-        };
+    const getItem = async (id) => {
+      try {
+        currentItem.value = await alfaService.getItem(id);
+      } catch (error) {
+        console.error('Failed to fetch item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
+      }
+    };
 
-        const updateItem = async () => {
-            try {
-              await alfaService.updateItem(currentItem.value.id, currentItem.value);
-              getItems();
-              closeModificarItemDialog();
-            } catch (error) {
-              console.error('Failed to update item:', error);
-              errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
-            }
-        };
+    const createItem = async () => {
+      try {
+        await alfaService.createItem(currentItem.value);
+        getItems();
+        closeIngresarItemDialog();
+      } catch (error) {
+        console.error('Failed to create item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
+      }
+    };
 
-        const openIngresarItemDialog = () => ingresarItemDialog.value.showModal();
-        const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
+    const updateItem = async () => {
+      try {
+        await alfaService.updateItem(currentItem.value.id, currentItem.value);
+        getItems();
+        closeModificarItemDialog();
+      } catch (error) {
+        console.error('Failed to update item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
+      }
+    };
 
-        const openModificarItemDialog = async (id) => {
-            await getItem(id);
-            modificarItemDialog.value.showModal();
-        };
-        const closeModificarItemDialog = () => modificarItemDialog.value.close();
+    const openIngresarItemDialog = () => ingresarItemDialog.value.showModal();
+    const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
 
-        onMounted(() => {
-          getItems();
-        });
+    const openModificarItemDialog = async (id) => {
+      await getItem(id);
+      modificarItemDialog.value.showModal();
+    };
+    const closeModificarItemDialog = () => modificarItemDialog.value.close();
 
-        return {
-            errorMessagesRef,
-            items,
-            currentItem,
-            getItems,
-            createItem,
-            updateItem,
-            openIngresarItemDialog,
-            closeIngresarItemDialog,
-            openModificarItemDialog,
-            closeModificarItemDialog,
-            ingresarItemDialog,
-            modificarItemDialog,
-        };
-    },
+    onMounted(() => {
+      getItems();
+    });
+
+    return {
+      errorMessagesRef,
+      items,
+      currentItem,
+      getItems,
+      createItem,
+      updateItem,
+      openIngresarItemDialog,
+      closeIngresarItemDialog,
+      openModificarItemDialog,
+      closeModificarItemDialog,
+      ingresarItemDialog,
+      modificarItemDialog,
+    };
+  },
 };

@@ -1,9 +1,9 @@
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import BetaService from './BetaService.js';
 import ErrorMessagesComponent from './ErrorMessagesComponent.js';
 
 export default {
-    template: `
+  template: `
 
     <error-messages-component ref="errorMessagesRef"></error-messages-component>
 
@@ -73,99 +73,99 @@ export default {
     </dialog>
   `,
 
-    props: {
-        apiUrl: {
-            type: String,
-            required: true,
-        },
+  props: {
+    apiUrl: {
+      type: String,
+      required: true,
     },
+  },
 
-    components: {
-        ErrorMessagesComponent,
-    },
+  components: {
+    ErrorMessagesComponent,
+  },
 
-    setup(props) {
-        const errorMessagesRef = ref(null);
-        
-        const items = ref([]);
-        const currentItem = ref({
-            id: 0,
-            texto: '',
-            entero: 0,
-            decimal: 0,
-        });
+  setup(props) {
+    const errorMessagesRef = ref(null);
 
-        const ingresarItemDialog = ref();
-        const modificarItemDialog = ref();
+    const items = ref([]);
+    const currentItem = ref({
+      id: 0,
+      texto: '',
+      entero: 0,
+      decimal: 0,
+    });
 
-        const getItems = async () => {
-            try {
-                const { data } = await axios.get(props.apiUrl);
-                if (typeof data !== 'object') {
-                    throw new Error('Invalid data format');
-                }
-                items.value = data;
-            } catch (error) {
-                console.error('Failed to fetch items: ', error);
-                errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
-            }
-        };
+    const ingresarItemDialog = ref();
+    const modificarItemDialog = ref();
 
-        const getItem = async (id) => {
-            try {
-                const { data } = await axios.get(`${props.apiUrl}/${id}`);
-                if (typeof data !== 'object') {
-                    throw new Error('Invalid data format');
-                }
-                currentItem.value = data;
-            } catch (error) {
-                console.error('Failed to fetch item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
-            }
-        };
+    const betaService = BetaService(props.apiUrl);
 
-        const createItem = async () => {
-            try {
-                await axios.post(props.apiUrl, currentItem.value);
-                getItems();
-            } catch (error) {
-                console.error('Failed to create item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
-            }
-        };
+    const getItems = async () => {
+      try {
+        items.value = await betaService.getItems();
+      } catch (error) {
+        console.error('Failed to fetch items: ', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
+      }
+    };
 
-        const updateItem = async () => {
-            try {
-                await axios.put(`${props.apiUrl}/${currentItem.value.id}`, currentItem.value);
-                getItems();
-            } catch (error) {
-                console.error('Failed to update item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
-            }
-        };
+    const getItem = async (id) => {
+      try {
+        currentItem.value = await betaService.getItem(id);
+      } catch (error) {
+        console.error('Failed to fetch item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
+      }
+    };
 
-        const openIngresarItemDialog = () => ingresarItemDialog.value.showModal();
-        const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
+    const createItem = async () => {
+      try {
+        await betaService.createItem(currentItem.value);
+        getItems();
+        closeIngresarItemDialog();
+      } catch (error) {
+        console.error('Failed to create item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
+      }
+    };
 
-        const openModificarItemDialog = async (id) => {
-            await getItem(id);
-            modificarItemDialog.value.showModal();
-        };
-        const closeModificarItemDialog = () => modificarItemDialog.value.close();
+    const updateItem = async () => {
+      try {
+        await betaService.updateItem(currentItem.value.id, currentItem.value);
+        getItems();
+        closeModificarItemDialog();
+      } catch (error) {
+        console.error('Failed to update item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
+      }
+    };
 
-        return {
-            errorMessagesRef,
-            items,
-            currentItem,
-            getItems,
-            createItem,
-            updateItem,
-            openIngresarItemDialog,
-            closeIngresarItemDialog,
-            openModificarItemDialog,
-            closeModificarItemDialog,
-            ingresarItemDialog,
-            modificarItemDialog,
-        };
-    },
+    const openIngresarItemDialog = () => ingresarItemDialog.value.showModal();
+    const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
+
+    const openModificarItemDialog = async (id) => {
+      await getItem(id);
+      modificarItemDialog.value.showModal();
+    };
+    const closeModificarItemDialog = () => modificarItemDialog.value.close();
+
+    onMounted(() => {
+      getItems();
+    });
+
+    return {
+      errorMessagesRef,
+      items,
+      currentItem,
+      getItems,
+      createItem,
+      updateItem,
+      openIngresarItemDialog,
+      closeIngresarItemDialog,
+      openModificarItemDialog,
+      closeModificarItemDialog,
+      ingresarItemDialog,
+      modificarItemDialog,
+    };
+  },
 };
