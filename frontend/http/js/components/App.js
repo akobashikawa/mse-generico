@@ -3,12 +3,14 @@ import axios from 'axios';
 import config from '../config.js';
 import AlfaComponent from './AlfaComponent.js';
 import BetaComponent from './BetaComponent.js';
+import GammaComponent from './GammaComponent.js';
 
 const App = {
 
 	components: {
 		AlfaComponent,
 		BetaComponent,
+		GammaComponent,
 	},
 
 	template: `
@@ -17,6 +19,8 @@ const App = {
 	<alfa-component :api-url="alfaApiUrl"/>
 	
 	<beta-component :api-url="betaApiUrl"/>
+
+	<gamma-component :api-url="gammaApiUrl"/>
 
 	<footer>
 		<em><a href="https://github.com/akobashikawa/mse-generico" target="_blank">@GitHub></a></em>
@@ -29,10 +33,12 @@ const App = {
 
 		const alfaApiUrl = `${apiUrl}/api/alfa`;
 		const betaApiUrl = `${apiUrl}/api/beta`;
+		const gammaApiUrl = `${apiUrl}/api/gamma`;
 
 		return {
 			alfaApiUrl,
 			betaApiUrl,
+			gammaApiUrl,
 		}
 	},
 
