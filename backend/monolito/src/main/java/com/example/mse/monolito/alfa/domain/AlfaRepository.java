@@ -1,6 +1,5 @@
-package com.example.mse.monolito.alfa.repository;
+package com.example.mse.monolito.alfa.domain;
 
-import com.example.mse.monolito.alfa.domain.Alfa;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AlfaRepository extends JpaRepository<Alfa, Long> {

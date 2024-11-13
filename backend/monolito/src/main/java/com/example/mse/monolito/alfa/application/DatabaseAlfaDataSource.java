@@ -2,7 +2,8 @@ package com.example.mse.monolito.alfa.application;
 
 import com.example.mse.monolito.alfa.domain.Alfa;
 import com.example.mse.monolito.alfa.domain.AlfaDataSource;
-import com.example.mse.monolito.alfa.repository.AlfaRepository;
+import com.example.mse.monolito.alfa.domain.AlfaRepository;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
