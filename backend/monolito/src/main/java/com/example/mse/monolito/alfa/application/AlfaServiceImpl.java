@@ -19,7 +19,7 @@ public class AlfaServiceImpl implements AlfaService {
         DatabaseAlfaDataSource databaseAlfaDataSource,
         JsonAlfaDataSource jsonAlfaDataSource,
         RestAlfaDataSource restAlfaDataSource,
-        @Value("${alfa.datasource.type}") String dataSourceType
+        @Value("${alfa.datasource.type:database}") String dataSourceType
     ) {
     	switch (dataSourceType) {
 	        case "database":

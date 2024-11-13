@@ -19,7 +19,7 @@ public class BetaServiceImpl implements BetaService {
         DatabaseBetaDataSource databaseBetaDataSource,
         JsonBetaDataSource jsonBetaDataSource,
         RestBetaDataSource restBetaDataSource,
-        @Value("${beta.datasource.type}") String dataSourceType
+        @Value("${beta.datasource.type:database}") String dataSourceType
     ) {
     	switch (dataSourceType) {
 	        case "database":

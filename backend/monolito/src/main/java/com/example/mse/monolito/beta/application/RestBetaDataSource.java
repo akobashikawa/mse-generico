@@ -1,5 +1,6 @@
 package com.example.mse.monolito.beta.application;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,10 +14,12 @@ import java.util.Optional;
 public class RestBetaDataSource implements BetaDataSource {
 
     private final RestTemplate restTemplate;
-    private final String apiUrl = "http://localhost:8080/beta"; // URL del API REST externo
+    private final String apiUrl; // URL del API REST externo
 
-    public RestBetaDataSource(RestTemplate restTemplate) {
+    public RestBetaDataSource(RestTemplate restTemplate,
+    		@Value("${beta.datasource.rest.url:}") String apiUrl) {
         this.restTemplate = restTemplate;
+        this.apiUrl = apiUrl;
     }
 
     @Override
