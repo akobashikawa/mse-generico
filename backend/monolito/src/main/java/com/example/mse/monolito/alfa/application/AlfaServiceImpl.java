@@ -51,4 +51,17 @@ public class AlfaServiceImpl implements AlfaService {
     public void deleteById(Long id) {
         dataSource.deleteById(id);
     }
+    
+    @Override
+    public Alfa updateEntero(Long id, Integer nuevoEntero) {
+        // Paso 1: Buscar el Alfa por ID
+        Alfa alfa = dataSource.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Alfa no encontrado con ID: " + id));
+        
+        // Paso 2: Actualizar el campo entero
+        alfa.setEntero(nuevoEntero);
+        
+        // Paso 3: Guardar la entidad actualizada
+        return dataSource.save(alfa);
+    }
 }

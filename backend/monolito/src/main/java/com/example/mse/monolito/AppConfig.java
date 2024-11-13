@@ -1,11 +1,14 @@
 package com.example.mse.monolito;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import io.nats.client.Connection;
+import io.nats.client.Nats;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 
@@ -38,5 +41,10 @@ public class AppConfig {
                         .title("API mse Genérico")
                         .version("1.0")
                         .description("Documentación de la API para mse Genérico"));
+    }
+    
+    @Bean
+    Connection natsConnection(@Value("${nats.url:nats://localhost:4222}") String host) throws Exception {
+        return Nats.connect(host);
     }
 }

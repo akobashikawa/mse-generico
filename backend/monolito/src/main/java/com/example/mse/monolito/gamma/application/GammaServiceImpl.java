@@ -3,6 +3,7 @@ package com.example.mse.monolito.gamma.application;
 import com.example.mse.monolito.gamma.domain.Gamma;
 import com.example.mse.monolito.gamma.domain.GammaDataSource;
 import com.example.mse.monolito.gamma.domain.GammaService;
+import com.example.mse.monolito.nats.NatsEventPublisher;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,17 @@ import java.util.Optional;
 public class GammaServiceImpl implements GammaService {
 
     private final GammaDataSource dataSource;
+    private final NatsEventPublisher eventPublisher;
 
     public GammaServiceImpl(
         DatabaseGammaDataSource databaseGammaDataSource,
         JsonGammaDataSource jsonGammaDataSource,
         RestGammaDataSource restGammaDataSource,
-        @Value("${gamma.datasource.type:database}") String dataSourceType
+        @Value("${gamma.datasource.type:database}") String dataSourceType,
+        NatsEventPublisher eventPublisher
     ) {
+    	this.eventPublisher = eventPublisher;
+    	
     	switch (dataSourceType) {
 	        case "database":
 	            this.dataSource = databaseGammaDataSource;
@@ -45,7 +50,20 @@ public class GammaServiceImpl implements GammaService {
     }
 
     public Gamma save(Gamma gamma) {
-        return dataSource.save(gamma);
+    	Gamma savedGamma = dataSource.save(gamma);
+    	
+    	// Publicar evento en NATS
+        String eventPayload = String.format(
+            "{\"gammaId\": %d, \"alfaId\": %d, \"betaId\": %d, \"entero\": %d}",
+            savedGamma.getId(),
+            savedGamma.getAlfa().getId(),
+            savedGamma.getBeta().getId(),
+            savedGamma.getEntero()
+        );
+
+        eventPublisher.publish("gamma.created", eventPayload);
+        
+    	return savedGamma;
     }
 
     public void deleteById(Long id) {

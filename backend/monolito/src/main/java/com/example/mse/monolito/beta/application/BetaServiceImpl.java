@@ -1,5 +1,6 @@
 package com.example.mse.monolito.beta.application;
 
+import com.example.mse.monolito.alfa.domain.Alfa;
 import com.example.mse.monolito.beta.domain.Beta;
 import com.example.mse.monolito.beta.domain.BetaDataSource;
 import com.example.mse.monolito.beta.domain.BetaService;
@@ -50,5 +51,18 @@ public class BetaServiceImpl implements BetaService {
 
     public void deleteById(Long id) {
         dataSource.deleteById(id);
+    }
+    
+    @Override
+    public Beta updateEntero(Long id, Integer nuevoEntero) {
+        // Paso 1: Buscar el Alfa por ID
+        Beta beta = dataSource.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Beta no encontrado con ID: " + id));
+        
+        // Paso 2: Actualizar el campo entero
+        beta.setEntero(nuevoEntero);
+        
+        // Paso 3: Guardar la entidad actualizada
+        return dataSource.save(beta);
     }
 }

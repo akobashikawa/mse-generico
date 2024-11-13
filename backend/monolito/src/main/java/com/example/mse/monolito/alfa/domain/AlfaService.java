@@ -8,4 +8,6 @@ public interface AlfaService {
     Optional<Alfa> findById(Long id);
     Alfa save(Alfa alfa);
     void deleteById(Long id);
+    
+    Alfa updateEntero(Long id, Integer nuevoEntero);
 }

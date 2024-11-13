@@ -8,4 +8,6 @@ public interface BetaService {
     Optional<Beta> findById(Long id);
     Beta save(Beta beta);
     void deleteById(Long id);
+    
+    Beta updateEntero(Long id, Integer nuevoEntero);
 }
