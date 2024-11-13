@@ -17,7 +17,7 @@ const ErrorMessagesComponent = {
     setup() {
       const errorMessages = ref([]);
   
-      const addErrorMessage = (message) => {console.log('AAA')
+      const addErrorMessage = (message) => {
         errorMessages.value.push(message);
       };
   
