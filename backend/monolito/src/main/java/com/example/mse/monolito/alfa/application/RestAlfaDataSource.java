@@ -13,7 +13,7 @@ import java.util.Optional;
 public class RestAlfaDataSource implements AlfaDataSource {
 
     private final RestTemplate restTemplate;
-    private final String apiUrl = "http://localhost:8080/beta"; // URL del API REST externo
+    private final String apiUrl = "http://localhost:8080/api/beta"; // URL del API REST externo
 
     public RestAlfaDataSource(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
