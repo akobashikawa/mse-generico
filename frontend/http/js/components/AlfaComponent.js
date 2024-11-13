@@ -1,5 +1,5 @@
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import AlfaService from './AlfaService.js';
 import ErrorMessagesComponent from './ErrorMessagesComponent.js';
 
 export default {
@@ -89,58 +89,54 @@ export default {
         
         const items = ref([]);
         const currentItem = ref({
-            id: 0,
-            texto: '',
-            entero: 0,
-            decimal: 0,
+          id: 0,
+          texto: '',
+          entero: 0,
+          decimal: 0,
         });
 
         const ingresarItemDialog = ref();
         const modificarItemDialog = ref();
 
+        const alfaService = AlfaService(props.apiUrl);
+
         const getItems = async () => {
             try {
-                const { data } = await axios.get(props.apiUrl);
-                if (typeof data !== 'object') {
-                    throw new Error('Invalid data format');
-                }
-                items.value = data;
+              items.value = await alfaService.getItems();
             } catch (error) {
-                console.error('Failed to fetch items: ', error);
-                errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
+              console.error('Failed to fetch items: ', error);
+              errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
             }
         };
 
         const getItem = async (id) => {
             try {
-                const { data } = await axios.get(`${props.apiUrl}/${id}`);
-                if (typeof data !== 'object') {
-                    throw new Error('Invalid data format');
-                }
-                currentItem.value = data;
+              currentItem.value = await alfaService.getItem(id);
             } catch (error) {
-                console.error('Failed to fetch item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
+              console.error('Failed to fetch item:', error);
+              errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
             }
         };
 
         const createItem = async () => {
             try {
-                await axios.post(props.apiUrl, currentItem.value);
-                getItems();
+              await alfaService.createItem(currentItem.value);
+              getItems();
+              closeIngresarItemDialog();
             } catch (error) {
-                console.error('Failed to create item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
+              console.error('Failed to create item:', error);
+              errorMessagesRef.value.addErrorMessage('Failed to create item: ' + error.message);
             }
         };
 
         const updateItem = async () => {
             try {
-                await axios.put(`${props.apiUrl}/${currentItem.value.id}`, currentItem.value);
-                getItems();
+              await alfaService.updateItem(currentItem.value.id, currentItem.value);
+              getItems();
+              closeModificarItemDialog();
             } catch (error) {
-                console.error('Failed to update item:', error);
-                errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
+              console.error('Failed to update item:', error);
+              errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
             }
         };
 
@@ -152,6 +148,10 @@ export default {
             modificarItemDialog.value.showModal();
         };
         const closeModificarItemDialog = () => modificarItemDialog.value.close();
+
+        onMounted(() => {
+          getItems();
+        });
 
         return {
             errorMessagesRef,
