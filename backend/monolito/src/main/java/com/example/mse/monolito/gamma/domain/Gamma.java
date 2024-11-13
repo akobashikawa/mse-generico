@@ -29,8 +29,8 @@ public class Gamma {
 	@JoinColumn(name = "alfa_id", nullable = false)
 	private Alfa alfa;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "beta_id", nullable = false)
-//	private Beta beta;
+	@ManyToOne
+	@JoinColumn(name = "beta_id", nullable = false)
+	private Beta beta;
 
 }

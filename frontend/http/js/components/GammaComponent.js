@@ -1,6 +1,7 @@
 import { ref, onMounted } from 'vue';
 import GammaService from './GammaService.js';
 import AlfaService from './AlfaService.js';
+import BetaService from './BetaService.js';
 import ErrorMessagesComponent from './ErrorMessagesComponent.js';
 
 export default {
@@ -11,6 +12,8 @@ export default {
     <h2>Gamma</h2>
 
     <p>API URL: {{ apiUrl }}</p>
+
+    <p><em><strong>Regla de negocio: </strong>Cuando se agrega un item, su entero se suma a los del alfa y beta seleccionados.</em></p>
 
     <button @click="getItems()">Traer items</button>
     <button @click="openIngresarItemDialog">Ingresar Item</button>
@@ -23,6 +26,7 @@ export default {
           <th>entero</th>
           <th>decimal</th>
           <th>alfa</th>
+          <th>beta</th>
           <th>acciones</th>
         </tr>
       </thead>
@@ -33,6 +37,7 @@ export default {
           <td>{{ item.entero }}</td>
           <td>{{ item.decimal }}</td>
           <td>{{ item.alfa.id }}: {{ item.alfa.texto }}</td>
+          <td>{{ item.beta.id }}: {{ item.beta.texto }}</td>
           <td>
             <button @click="openModificarItemDialog(item.id)">Modificar</button>
           </td>
@@ -55,6 +60,15 @@ export default {
 					<label> <select v-model="currentItem.alfa.id" @change="selectAlfa">
 							<option value="0">- Seleccionar -</option>
 							<option :value="item.id" v-for="item of alfaItems">
+                {{ item.id }}: {{ item.texto }}</option>
+						</select>
+					</label>
+				</fieldset>
+        <fieldset>
+					<legend>Beta</legend>
+					<label> <select v-model="currentItem.beta.id" @change="selectBeta">
+							<option value="0">- Seleccionar -</option>
+							<option :value="item.id" v-for="item of betaItems">
                 {{ item.id }}: {{ item.texto }}</option>
 						</select>
 					</label>
@@ -86,6 +100,15 @@ export default {
 						</select>
 					</label>
 				</fieldset>
+        <fieldset>
+					<legend>Beta</legend>
+					<label> <select v-model="currentItem.beta.id" @change="selectBeta">
+							<option value="0">- Seleccionar -</option>
+							<option :value="item.id" v-for="item of betaItems">
+                {{ item.id }}: {{ item.texto }}</option>
+						</select>
+					</label>
+				</fieldset>
         <footer>
           <button type="reset" @click="closeModificarItemDialog">Cancelar</button>
           <button type="submit" @click.prevent="updateItem">Guardar</button>
@@ -100,6 +123,10 @@ export default {
       required: true,
     },
     alfaApiUrl: {
+      type: String,
+      required: true,
+    },
+    betaApiUrl: {
       type: String,
       required: true,
     },
@@ -121,15 +148,20 @@ export default {
       alfa: {
         id: 0,
       },
+      beta: {
+        id: 0,
+      },
     });
 
     const alfaItems = ref([]);
+    const betaItems = ref([]);
 
     const ingresarItemDialog = ref();
     const modificarItemDialog = ref();
 
     const gammaService = GammaService(props.apiUrl);
     const alfaService = AlfaService(props.alfaApiUrl);
+    const betaService = BetaService(props.betaApiUrl);
 
     const getItems = async () => {
       try {
@@ -149,7 +181,20 @@ export default {
       }
     };
 
+    const getBetaItems = async () => {
+      try {
+        betaItems.value = await betaService.getItems();
+      } catch (error) {
+        console.error('Failed to fetch items: ', error);
+        errorMessagesRef.value.addErrorMessage('Failed to fetch items: ' + error.message);
+      }
+    };
+
     const selectAlfa = () => {
+			// nothing
+		};
+
+    const selectBeta = () => {
 			// nothing
 		};
 
@@ -186,12 +231,14 @@ export default {
 
     const openIngresarItemDialog = async () => {
       await getAlfaItems();
+      await getBetaItems();
       ingresarItemDialog.value.showModal();
     };
     const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
 
     const openModificarItemDialog = async (id) => {
       await getAlfaItems();
+      await getBetaItems();
       await getItem(id);
       modificarItemDialog.value.showModal();
     };
@@ -206,8 +253,13 @@ export default {
       items,
       currentItem,
       alfaItems,
+      betaItems,
       getItems,
+      getItem,
       getAlfaItems,
+      getBetaItems,
+      selectAlfa,
+      selectBeta,
       createItem,
       updateItem,
       openIngresarItemDialog,
