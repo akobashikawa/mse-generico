@@ -1,41 +1,54 @@
 package com.example.mse.monolito.alfa.application;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.mse.monolito.alfa.domain.Alfa;
+import com.example.mse.monolito.alfa.domain.AlfaDataSource;
+import com.example.mse.monolito.alfa.domain.AlfaService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.example.mse.monolito.alfa.domain.Alfa;
-import com.example.mse.monolito.alfa.domain.AlfaService;
-import com.example.mse.monolito.alfa.repository.AlfaRepository;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AlfaServiceImpl implements AlfaService {
 
-    private final AlfaRepository alfaRepository;
+    private final AlfaDataSource dataSource;
 
-    public AlfaServiceImpl(AlfaRepository alfaRepository) {
-        this.alfaRepository = alfaRepository;
+    public AlfaServiceImpl(
+        DatabaseAlfaDataSource databaseAlfaDataSource,
+        JsonAlfaDataSource jsonAlfaDataSource,
+        RestAlfaDataSource restAlfaDataSource,
+        @Value("${alfa.datasource.type}") String dataSourceType
+    ) {
+    	switch (dataSourceType) {
+	        case "database":
+	            this.dataSource = databaseAlfaDataSource;
+	            break;
+	        case "json":
+	            this.dataSource = jsonAlfaDataSource;
+	            break;
+	        case "rest":
+	            this.dataSource = restAlfaDataSource;
+	            break;
+	        default:
+	            throw new IllegalArgumentException("Unknown data source type: " + dataSourceType);
+	    }
     }
 
-    @Override
     public List<Alfa> findAll() {
-        return alfaRepository.findAll();
+        return dataSource.findAll();
     }
 
-    @Override
     public Optional<Alfa> findById(Long id) {
-        return alfaRepository.findById(id);
+        return dataSource.findById(id);
     }
 
-    @Override
     public Alfa save(Alfa alfa) {
-        return alfaRepository.save(alfa);
+        return dataSource.save(alfa);
     }
 
-    @Override
     public void deleteById(Long id) {
-        alfaRepository.deleteById(id);
+        dataSource.deleteById(id);
     }
-    
 }
