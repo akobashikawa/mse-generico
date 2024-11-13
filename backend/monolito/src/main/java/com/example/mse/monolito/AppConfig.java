@@ -6,6 +6,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+
 @Configuration
 public class AppConfig {
 
@@ -26,5 +29,14 @@ public class AppConfig {
                         .allowCredentials(true); // Permite cookies y autenticación
             }
         };
+    }
+    
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("API mse Genérico")
+                        .version("1.0")
+                        .description("Documentación de la API para mse Genérico"));
     }
 }
