@@ -2,8 +2,10 @@ package com.example.mse.monolito.beta.application;
 
 import com.example.mse.monolito.alfa.domain.Alfa;
 import com.example.mse.monolito.beta.domain.Beta;
-import com.example.mse.monolito.beta.domain.BetaDataSource;
-import com.example.mse.monolito.beta.domain.BetaService;
+import com.example.mse.monolito.beta.infrastructure.repository.BetaDataSource;
+import com.example.mse.monolito.beta.infrastructure.repository.DatabaseBetaDataSource;
+import com.example.mse.monolito.beta.infrastructure.repository.JsonBetaDataSource;
+import com.example.mse.monolito.beta.infrastructure.repository.RestBetaDataSource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

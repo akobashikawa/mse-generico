@@ -1,8 +1,10 @@
 package com.example.mse.monolito.alfa.application;
 
 import com.example.mse.monolito.alfa.domain.Alfa;
-import com.example.mse.monolito.alfa.domain.AlfaDataSource;
-import com.example.mse.monolito.alfa.domain.AlfaService;
+import com.example.mse.monolito.alfa.infrastructure.repository.AlfaDataSource;
+import com.example.mse.monolito.alfa.infrastructure.repository.DatabaseAlfaDataSource;
+import com.example.mse.monolito.alfa.infrastructure.repository.JsonAlfaDataSource;
+import com.example.mse.monolito.alfa.infrastructure.repository.RestAlfaDataSource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

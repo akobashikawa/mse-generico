@@ -1,8 +1,10 @@
 package com.example.mse.monolito.gamma.application;
 
 import com.example.mse.monolito.gamma.domain.Gamma;
-import com.example.mse.monolito.gamma.domain.GammaDataSource;
-import com.example.mse.monolito.gamma.domain.GammaService;
+import com.example.mse.monolito.gamma.infrastructure.repository.DatabaseGammaDataSource;
+import com.example.mse.monolito.gamma.infrastructure.repository.GammaDataSource;
+import com.example.mse.monolito.gamma.infrastructure.repository.JsonGammaDataSource;
+import com.example.mse.monolito.gamma.infrastructure.repository.RestGammaDataSource;
 import com.example.mse.monolito.nats.NatsEventPublisher;
 
 import org.springframework.beans.factory.annotation.Value;
