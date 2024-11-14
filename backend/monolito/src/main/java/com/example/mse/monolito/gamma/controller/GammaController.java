@@ -39,6 +39,7 @@ public class GammaController {
 
     @PostMapping
     public Gamma create(@RequestBody Gamma gamma) {
+    	gamma.setId(null);
         return gammaService.save(gamma);
     }
 

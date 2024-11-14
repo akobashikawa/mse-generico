@@ -140,7 +140,11 @@ export default {
       }
     };
 
-    const openIngresarItemDialog = () => ingresarItemDialog.value.showModal();
+    const openIngresarItemDialog = () => {
+      currentItem.value.id = 0;
+      ingresarItemDialog.value.showModal();
+    };
+    
     const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
 
     const openModificarItemDialog = async (id) => {

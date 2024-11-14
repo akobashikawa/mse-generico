@@ -39,6 +39,7 @@ public class BetaController {
 
     @PostMapping
     public Beta create(@RequestBody Beta beta) {
+    	beta.setId(null);
         return betaService.save(beta);
     }
 

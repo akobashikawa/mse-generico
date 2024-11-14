@@ -39,6 +39,7 @@ public class AlfaController {
 
     @PostMapping
     public Alfa create(@RequestBody Alfa alfa) {
+    	alfa.setId(null);
         return alfaService.save(alfa);
     }
 

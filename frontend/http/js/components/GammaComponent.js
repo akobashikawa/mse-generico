@@ -232,8 +232,10 @@ export default {
     const openIngresarItemDialog = async () => {
       await getAlfaItems();
       await getBetaItems();
+      currentItem.value.id = 0;
       ingresarItemDialog.value.showModal();
     };
+    
     const closeIngresarItemDialog = () => ingresarItemDialog.value.close();
 
     const openModificarItemDialog = async (id) => {
