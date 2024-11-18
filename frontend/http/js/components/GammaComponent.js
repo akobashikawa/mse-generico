@@ -74,6 +74,7 @@ export default {
 					</label>
 				</fieldset>
         <footer>
+          <button type="button" @click="generateCurrentItem">Generate</button>
           <button type="reset" @click="closeIngresarItemDialog">Cancelar</button>
           <button type="submit" @click.prevent="createItem">Guardar</button>
         </footer>
@@ -206,6 +207,14 @@ export default {
         errorMessagesRef.value.addErrorMessage('Failed to fetch item: ' + error.message);
       }
     };
+    
+    const generateCurrentItem = () => {
+      const id = items.value.length + 1;
+      currentItem.value.texto = 'G' + id.toString().padStart(3, '0');
+      currentItem.value.entero = id;
+      currentItem.value.decimal = id + 0.25;
+
+    };
 
     const createItem = async () => {
       try {
@@ -258,6 +267,7 @@ export default {
       betaItems,
       getItems,
       getItem,
+      generateCurrentItem,
       getAlfaItems,
       getBetaItems,
       selectAlfa,
