@@ -45,9 +45,10 @@ export default {
         <fieldset>
           <label> Texto: <input type="text" v-model="currentItem.texto" /> </label> 
           <label> Entero: <input type="number" v-model="currentItem.entero" /> </label>
-          <label> Decimal: <input type="number" step="0.1" v-model="currentItem.decimal" /> </label> 
+          <label> Decimal: <input type="number" step="0.05" v-model="currentItem.decimal" /> </label> 
         </fieldset>
         <footer>
+          <button type="button" @click="generateCurrentItem">Generate</button>
           <button type="reset" @click="closeIngresarItemDialog">Cancelar</button>
           <button type="submit" @click.prevent="createItem">Guardar</button>
         </footer>
@@ -63,7 +64,7 @@ export default {
           <label> ID: {{ currentItem.id }} </label> 
           <label> Texto: <input type="text" v-model="currentItem.texto" /> </label> 
           <label> Entero: <input type="number" v-model="currentItem.entero" /> </label>
-          <label> Decimal: <input type="number" step="0.1" v-model="currentItem.decimal" /> </label>
+          <label> Decimal: <input type="number" step="0.05" v-model="currentItem.decimal" /> </label>
         </fieldset>
         <footer>
           <button type="reset" @click="closeModificarItemDialog">Cancelar</button>
@@ -118,6 +119,15 @@ export default {
       }
     };
 
+    const generateCurrentItem = () => {
+      const id = items.value.length + 1;
+      currentItem.value = {
+        texto: 'A' + id.toString().padStart(3, '0'),
+        entero: id,
+        decimal: id + 0.25,
+      };
+    };
+
     const createItem = async () => {
       try {
         await alfaService.createItem(currentItem.value);
@@ -162,6 +172,7 @@ export default {
       items,
       currentItem,
       getItems,
+      generateCurrentItem,
       createItem,
       updateItem,
       openIngresarItemDialog,
