@@ -48,6 +48,7 @@ export default {
           <label> Decimal: <input type="number" step="0.1" v-model="currentItem.decimal" /> </label> 
         </fieldset>
         <footer>
+          <button type="button" @click="generateCurrentItem">Generate</button>
           <button type="reset" @click="closeIngresarItemDialog">Cancelar</button>
           <button type="submit" @click.prevent="createItem">Guardar</button>
         </footer>
@@ -118,6 +119,15 @@ export default {
       }
     };
 
+    const generateCurrentItem = () => {
+      const id = items.value.length + 1;
+      currentItem.value = {
+        texto: 'B' + id.toString().padStart(3, '0'),
+        entero: id,
+        decimal: id + 0.25,
+      };
+    };
+
     const createItem = async () => {
       try {
         await betaService.createItem(currentItem.value);
@@ -162,6 +172,7 @@ export default {
       items,
       currentItem,
       getItems,
+      generateCurrentItem,
       createItem,
       updateItem,
       openIngresarItemDialog,
