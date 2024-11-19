@@ -10,7 +10,9 @@ import com.example.mse.monolito.nats.NatsEventPublisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,15 +57,14 @@ public class GammaServiceImpl implements GammaService {
     	Gamma savedGamma = dataSource.save(gamma);
     	
     	// Publicar evento en NATS
-        String eventPayload = String.format(
-            "{\"gammaId\": %d, \"alfaId\": %d, \"betaId\": %d, \"entero\": %d}",
-            savedGamma.getId(),
-            savedGamma.getAlfa().getId(),
-            savedGamma.getBeta().getId(),
-            savedGamma.getEntero()
-        );
+    	Map<String, Object> payload = new HashMap<>();
+    	payload.put("id", savedGamma.getId());
+    	payload.put("entero", savedGamma.getEntero());
+    	payload.put("decimal", savedGamma.getDecimal());
+    	payload.put("alfa_id", savedGamma.getAlfa().getId());
+    	payload.put("beta_id", savedGamma.getBeta().getId());
 
-        eventPublisher.publish("gamma.created", eventPayload);
+        eventPublisher.publish("gamma.created", payload);
         
     	return savedGamma;
     }

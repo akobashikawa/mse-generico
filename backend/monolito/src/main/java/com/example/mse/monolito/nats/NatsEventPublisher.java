@@ -2,15 +2,19 @@ package com.example.mse.monolito.nats;
 
 import io.nats.client.Connection;
 import io.nats.client.Dispatcher;
-import io.nats.client.Nats;
-import org.springframework.stereotype.Component;
+import io.nats.client.Message;
+import io.nats.client.MessageHandler;
 
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
+import java.util.Map;
 
-@Component
+@Service
 public class NatsEventPublisher {
 
     private final Connection natsConnection;
@@ -30,51 +34,16 @@ public class NatsEventPublisher {
             e.printStackTrace();
         }
     }
+    
+    public void subscribe(String topic, MessageHandler handler) throws Exception {
+		Dispatcher dispatcher = natsConnection.createDispatcher(handler);
+		dispatcher.subscribe(topic);
+	}
+    
+    public Map<String, Object> getPayload(Message msg) throws Exception {
+		String json = new String(msg.getData());
+		return objectMapper.readValue(json, Map.class);
+	}
 
-    public void subscribe(String subject, MessageHandler messageHandler) {
-        Dispatcher dispatcher = natsConnection.createDispatcher(msg -> {
-            String response = new String(msg.getData(), StandardCharsets.UTF_8);
-            messageHandler.handleMessage(response);
-        });
-        dispatcher.subscribe(subject);
-    }
-
-    /**
-     * Responde a solicitudes enviadas en un tema.
-     * @param subject Tema al que se responde.
-     * @param responder Función que maneja la solicitud y devuelve la respuesta.
-     */
-    public void reply(String subject, RequestHandler responder) {
-        Dispatcher dispatcher = natsConnection.createDispatcher(msg -> {
-            String request = new String(msg.getData(), StandardCharsets.UTF_8);
-            String response = responder.handleRequest(request);
-            try {
-                natsConnection.publish(msg.getReplyTo(), response.getBytes(StandardCharsets.UTF_8));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        dispatcher.subscribe(subject);
-    }
-
-    /**
-     * Cierra la conexión con NATS.
-     */
-    public void close() {
-        try {
-            natsConnection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FunctionalInterface
-    public interface MessageHandler {
-        void handleMessage(String message);
-    }
-
-    @FunctionalInterface
-    public interface RequestHandler {
-        String handleRequest(String request);
-    }
+   
 }
