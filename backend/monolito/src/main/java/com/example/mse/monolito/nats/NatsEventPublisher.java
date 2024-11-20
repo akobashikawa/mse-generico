@@ -5,6 +5,7 @@ import io.nats.client.Dispatcher;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,13 +16,11 @@ import java.util.Map;
 @Service
 public class NatsEventPublisher {
 
-    private final Connection natsConnection;
-    private final ObjectMapper objectMapper;
-
-    public NatsEventPublisher(Connection natsConnection) {
-        this.natsConnection = natsConnection;
-        this.objectMapper = new ObjectMapper();
-    }
+	@Autowired
+    private Connection natsConnection;
+	
+	@Autowired
+    private ObjectMapper objectMapper;
 
     public void publish(String subject, Object payload) {
         try {

@@ -27,8 +27,6 @@ public class GammaEventListener {
 	@Autowired
     private GammaService gammaService;
 	
-	private final ObjectMapper objectMapper = new ObjectMapper();
-	
 	@PostConstruct
 	public void init() throws Exception {
 		System.out.println("gamma escuchando NATS");

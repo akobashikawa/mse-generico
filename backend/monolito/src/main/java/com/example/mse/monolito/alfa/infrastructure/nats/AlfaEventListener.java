@@ -27,8 +27,6 @@ public class AlfaEventListener {
 	@Autowired
     private AlfaService alfaService;
 	
-	private final ObjectMapper objectMapper = new ObjectMapper();
-	
 	@PostConstruct
 	public void init() throws Exception {
 		System.out.println("alfa escuchando NATS");

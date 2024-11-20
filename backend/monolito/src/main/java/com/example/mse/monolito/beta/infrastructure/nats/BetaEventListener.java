@@ -27,8 +27,6 @@ public class BetaEventListener {
 	@Autowired
     private BetaService betaService;
 	
-	private final ObjectMapper objectMapper = new ObjectMapper();
-	
 	@PostConstruct
 	public void init() throws Exception {
 		System.out.println("beta escuchando NATS");
