@@ -29,7 +29,7 @@ public class GammaEventListener {
 	
 	@PostConstruct
 	public void init() throws Exception {
-		System.out.println("gamma escuchando NATS");
+		System.out.println("[NATS] gamma escuchando");
 		eventPublisher.subscribe("alfa.created", this::handleAlfaCreated);
 		eventPublisher.subscribe("beta.created", this::handleBetaCreated);
 	}
@@ -37,7 +37,7 @@ public class GammaEventListener {
 	private void handleAlfaCreated(Message msg) {
 		try {
 			Map<String, Object> payload = eventPublisher.getPayload(msg);
-			System.out.println("gamma manejando alfa.created: " + payload);
+			System.out.println("[NATS] gamma manejando alfa.created: " + payload);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

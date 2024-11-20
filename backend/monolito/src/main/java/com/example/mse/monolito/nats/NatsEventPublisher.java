@@ -26,7 +26,7 @@ public class NatsEventPublisher {
         try {
         	String message = objectMapper.writeValueAsString(payload);
             natsConnection.publish(subject, message.getBytes(StandardCharsets.UTF_8));
-            System.out.println("Evento NATS publicado " + subject + ": " + message);
+            System.out.println("[NATS] evento publicado " + subject + ": " + message);
         } catch (Exception e) {
             e.printStackTrace();
         }

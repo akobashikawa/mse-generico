@@ -29,14 +29,14 @@ public class BetaEventListener {
 	
 	@PostConstruct
 	public void init() throws Exception {
-		System.out.println("beta escuchando NATS");
+		System.out.println("[NATS] beta escuchando");
 		eventPublisher.subscribe("gamma.created", this::handleGammaCreated);
 	}
 
 	private void handleGammaCreated(Message msg) {
 		try {
 			Map<String, Object> payload = eventPublisher.getPayload(msg);
-			System.out.println("beta manejando gamma.created: " + payload);
+			System.out.println("[NATS] beta manejando gamma.created: " + payload);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
