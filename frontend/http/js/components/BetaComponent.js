@@ -124,7 +124,7 @@ export default {
       currentItem.value = {
         texto: 'B' + id.toString().padStart(3, '0'),
         entero: id,
-        decimal: id + 0.25,
+        decimal: (id + 0.05 * Math.floor(Math.random() / 0.05)).toFixed(2),
       };
     };
 

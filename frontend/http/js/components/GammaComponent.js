@@ -212,8 +212,7 @@ export default {
       const id = items.value.length + 1;
       currentItem.value.texto = 'G' + id.toString().padStart(3, '0');
       currentItem.value.entero = id;
-      currentItem.value.decimal = id + 0.25;
-
+      currentItem.value.decimal = (id + 0.05 * Math.floor(Math.random() / 0.05)).toFixed(2);
     };
 
     const createItem = async () => {
