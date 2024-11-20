@@ -33,6 +33,11 @@ public class JsonGammaDataSource implements GammaDataSource {
     public Optional<Gamma> findById(Long id) {
         return findAll().stream().filter(gamma -> gamma.getId().equals(id)).findFirst();
     }
+    
+    @Override
+    public Optional<Gamma> findByAlfaId(Long alfaId) {
+    	return findAll().stream().filter(gamma -> gamma.getAlfa().getId().equals(alfaId)).findFirst();
+    }
 
     @Override
     public Gamma save(Gamma gamma) {
@@ -42,5 +47,10 @@ public class JsonGammaDataSource implements GammaDataSource {
     @Override
     public void deleteById(Long id) {
         throw new UnsupportedOperationException("Delete operation not supported for JSON data source");
+    }
+    
+    @Override
+    public void deleteByAlfaId(Long alfaId) {
+    	throw new UnsupportedOperationException("Delete operation not supported for JSON data source");
     }
 }

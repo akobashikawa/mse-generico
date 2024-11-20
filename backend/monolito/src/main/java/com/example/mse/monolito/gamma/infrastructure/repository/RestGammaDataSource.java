@@ -32,6 +32,12 @@ public class RestGammaDataSource implements GammaDataSource {
         Gamma gamma = restTemplate.getForObject(apiUrl + "/" + id, Gamma.class);
         return Optional.ofNullable(gamma);
     }
+    
+    @Override
+    public Optional<Gamma> findByAlfaId(Long alfaId) {
+    	Gamma gamma = restTemplate.getForObject(apiUrl + "/alfa_id/" + alfaId, Gamma.class);
+    	return Optional.ofNullable(gamma);
+    }
 
     @Override
     public Gamma save(Gamma gamma) {
@@ -41,6 +47,11 @@ public class RestGammaDataSource implements GammaDataSource {
     @Override
     public void deleteById(Long id) {
         restTemplate.delete(apiUrl + "/" + id);
+    }
+    
+    @Override
+    public void deleteByAlfaId(Long alfaId) {
+    	restTemplate.delete(apiUrl + "/alfa_id/" + alfaId);
     }
 }
 

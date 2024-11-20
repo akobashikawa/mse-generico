@@ -52,7 +52,7 @@ public class BetaEventListener {
 	        System.out.println("alfa_id: " + alfaId);
 	        System.out.println("beta_id: " + betaId);
 	        
-	        betaService.updateEntero(alfaId, entero);
+	        betaService.updateEntero(betaId, entero);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

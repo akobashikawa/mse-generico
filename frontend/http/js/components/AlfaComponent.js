@@ -173,6 +173,7 @@ export default {
       try {
         await alfaService.deleteItem(toDeleteItemId.value);
         getItems();
+        closeEliminarItemDialog();
       } catch (error) {
         console.error('Failed to update item:', error);
         errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
