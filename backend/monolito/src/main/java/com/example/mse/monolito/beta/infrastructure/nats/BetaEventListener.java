@@ -37,6 +37,22 @@ public class BetaEventListener {
 		try {
 			Map<String, Object> payload = eventPublisher.getPayload(msg);
 			System.out.println("[NATS] beta manejando gamma.created: " + payload);
+			
+			Long id = ((Number) payload.get("id")).longValue();
+			String texto = (String) payload.get("texto");
+	        Integer entero = (Integer) payload.get("entero");
+	        Double decimal = (Double) payload.get("decimal");
+	        Long alfaId = ((Number) payload.get("alfa_id")).longValue();
+	        Long betaId = ((Number) payload.get("beta_id")).longValue();
+			
+	        System.out.println("id: " + id);
+	        System.out.println("texto: " + texto);
+	        System.out.println("entero: " + entero);
+	        System.out.println("decimal: " + decimal);
+	        System.out.println("alfa_id: " + alfaId);
+	        System.out.println("beta_id: " + betaId);
+	        
+	        betaService.updateEntero(alfaId, entero);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

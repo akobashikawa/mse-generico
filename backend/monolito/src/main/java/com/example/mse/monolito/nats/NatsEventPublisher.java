@@ -8,6 +8,7 @@ import io.nats.client.MessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
@@ -38,8 +39,10 @@ public class NatsEventPublisher {
 	}
     
     public Map<String, Object> getPayload(Message msg) throws Exception {
-		String json = new String(msg.getData());
-		return objectMapper.readValue(json, Map.class);
+		String jsonPayload = new String(msg.getData());
+		Map<String, Object> payload = objectMapper.readValue(jsonPayload, new TypeReference<Map<String, Object>>() {});
+
+		return payload;
 	}
 
    

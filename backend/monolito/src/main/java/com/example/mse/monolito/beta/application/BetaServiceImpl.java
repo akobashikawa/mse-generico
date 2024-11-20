@@ -59,6 +59,7 @@ public class BetaServiceImpl implements BetaService {
         // Publicar evento en NATS
     	Map<String, Object> payload = new HashMap<>();
     	payload.put("id", savedItem.getId());
+    	payload.put("texto", savedItem.getTexto());
     	payload.put("entero", savedItem.getEntero());
     	payload.put("decimal", savedItem.getDecimal());
 
@@ -72,15 +73,13 @@ public class BetaServiceImpl implements BetaService {
     }
     
     @Override
-    public Beta updateEntero(Long id, Integer nuevoEntero) {
-        // Paso 1: Buscar el Alfa por ID
-        Beta beta = dataSource.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Beta no encontrado con ID: " + id));
+    public Beta updateEntero(Long id, Integer entero) {
+        Beta found = dataSource.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Beta no encontrado con id: " + id));
         
-        // Paso 2: Actualizar el campo entero
-        beta.setEntero(nuevoEntero);
+        Integer nuevoEntero = found.getEntero() + entero;
+        found.setEntero(nuevoEntero);
         
-        // Paso 3: Guardar la entidad actualizada
-        return dataSource.save(beta);
+        return dataSource.save(found);
     }
 }

@@ -5,6 +5,7 @@ import com.example.mse.monolito.alfa.infrastructure.repository.AlfaDataSource;
 import com.example.mse.monolito.alfa.infrastructure.repository.DatabaseAlfaDataSource;
 import com.example.mse.monolito.alfa.infrastructure.repository.JsonAlfaDataSource;
 import com.example.mse.monolito.alfa.infrastructure.repository.RestAlfaDataSource;
+import com.example.mse.monolito.beta.domain.Beta;
 import com.example.mse.monolito.gamma.infrastructure.repository.GammaDataSource;
 import com.example.mse.monolito.nats.NatsEventPublisher;
 
@@ -60,6 +61,7 @@ public class AlfaServiceImpl implements AlfaService {
         // Publicar evento en NATS
     	Map<String, Object> payload = new HashMap<>();
     	payload.put("id", savedItem.getId());
+    	payload.put("texto", savedItem.getTexto());
     	payload.put("entero", savedItem.getEntero());
     	payload.put("decimal", savedItem.getDecimal());
 
@@ -73,15 +75,13 @@ public class AlfaServiceImpl implements AlfaService {
     }
     
     @Override
-    public Alfa updateEntero(Long id, Integer nuevoEntero) {
-        // Paso 1: Buscar el Alfa por ID
-        Alfa alfa = dataSource.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Alfa no encontrado con ID: " + id));
+    public Alfa updateEntero(Long id, Integer entero) {
+    	Alfa found = dataSource.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Alfa no encontrado con id: " + id));
         
-        // Paso 2: Actualizar el campo entero
-        alfa.setEntero(nuevoEntero);
+    	Integer nuevoEntero = found.getEntero() + entero;
+        found.setEntero(nuevoEntero);
         
-        // Paso 3: Guardar la entidad actualizada
-        return dataSource.save(alfa);
+        return dataSource.save(found);
     }
 }
