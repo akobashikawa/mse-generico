@@ -1,4 +1,4 @@
-import { ref, watch, nextTick } from 'vue';
+import { ref, useTemplateRef, watch, nextTick } from 'vue';
 
 const ErrorMessagesComponent = {
     template: `
@@ -28,6 +28,8 @@ const ErrorMessagesComponent = {
       const clearErrorMessages = () => {
         errorMessages.value = [];
       };
+
+      const errorContainer = useTemplateRef('errorContainer');
 
       watch(
         errorMessages,
