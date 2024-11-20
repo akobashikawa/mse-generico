@@ -40,7 +40,7 @@ public class NatsEventPublisher {
     
     public Map<String, Object> getPayload(Message msg) throws Exception {
 		String jsonPayload = new String(msg.getData());
-		Map<String, Object> payload = objectMapper.readValue(jsonPayload, new TypeReference<Map<String, Object>>() {});
+		Map<String, Object> payload = objectMapper.readValue(jsonPayload, Map.class);
 
 		return payload;
 	}
