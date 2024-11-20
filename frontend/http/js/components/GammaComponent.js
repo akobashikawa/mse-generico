@@ -137,7 +137,9 @@ export default {
     ErrorMessagesComponent,
   },
 
-  setup(props) {
+  emits: ['item-created'],
+
+  setup(props, { emit }) {
     const errorMessagesRef = ref(null);
 
     const items = ref([]);
@@ -218,6 +220,7 @@ export default {
     const createItem = async () => {
       try {
         await gammaService.createItem(currentItem.value);
+        emit('item-created');
         getItems();
         closeIngresarItemDialog();
       } catch (error) {

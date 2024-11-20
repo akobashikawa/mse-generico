@@ -32,6 +32,7 @@ export default {
           <td>{{ item.decimal }}</td>
           <td>
             <button @click="openModificarItemDialog(item.id)">Modificar</button>
+            <button class="danger" @click="openEliminarItemDialog(item.id)">X</button>
           </td>
         </tr>
       </tbody>
@@ -72,6 +73,22 @@ export default {
         </footer>
       </form>
     </dialog>
+
+    <dialog ref="eliminarItemDialog">
+      <header>
+        <h2>Eliminar Item</h2>
+      </header>
+      <form method="dialog">
+        <fieldset>
+          <label> ID: {{ toDeleteItemId }} </label> 
+          <p>Se eliminarán en cascada todos los items relacionados.</p>
+        </fieldset>
+        <footer>
+          <button type="reset" @click="closeEliminarItemDialog">Cancelar</button>
+          <button type="submit" @click.prevent="deleteItem">Eliminar</button>
+        </footer>
+      </form>
+    </dialog>
   `,
 
   props: {
@@ -95,9 +112,11 @@ export default {
       entero: 0,
       decimal: 0,
     });
+    const toDeleteItemId = ref(null);
 
     const ingresarItemDialog = ref();
     const modificarItemDialog = ref();
+    const eliminarItemDialog = ref();
 
     const alfaService = AlfaService(props.apiUrl);
 
@@ -150,6 +169,16 @@ export default {
       }
     };
 
+    const deleteItem = async () => {
+      try {
+        await alfaService.deleteItem(toDeleteItemId.value);
+        getItems();
+      } catch (error) {
+        console.error('Failed to update item:', error);
+        errorMessagesRef.value.addErrorMessage('Failed to update item: ' + error.message);
+      }
+    };
+
     const openIngresarItemDialog = () => {
       currentItem.value.id = 0;
       ingresarItemDialog.value.showModal();
@@ -163,6 +192,12 @@ export default {
     };
     const closeModificarItemDialog = () => modificarItemDialog.value.close();
 
+    const openEliminarItemDialog = async (id) => {
+      toDeleteItemId.value = id;
+      eliminarItemDialog.value.showModal();
+    };
+    const closeEliminarItemDialog = () => eliminarItemDialog.value.close();
+
     onMounted(() => {
       getItems();
     });
@@ -171,16 +206,21 @@ export default {
       errorMessagesRef,
       items,
       currentItem,
+      toDeleteItemId,
       getItems,
       generateCurrentItem,
       createItem,
       updateItem,
+      deleteItem,
       openIngresarItemDialog,
       closeIngresarItemDialog,
       openModificarItemDialog,
       closeModificarItemDialog,
+      openEliminarItemDialog,
+      closeEliminarItemDialog,
       ingresarItemDialog,
       modificarItemDialog,
+      eliminarItemDialog,
     };
   },
 };

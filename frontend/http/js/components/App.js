@@ -1,4 +1,4 @@
-import { ref, onMounted, watch, nextTick } from 'vue';
+import { ref, useTemplateRef, onMounted, watch, nextTick } from 'vue';
 import axios from 'axios';
 import config from '../config.js';
 import AlfaComponent from './AlfaComponent.js';
@@ -16,13 +16,14 @@ const App = {
 	template: `
 	<h1>HTTP</h1>
 
-	<alfa-component :api-url="alfaApiUrl"/>
+	<alfa-component ref="alfa" :api-url="alfaApiUrl"/>
 	
-	<beta-component :api-url="betaApiUrl"/>
+	<beta-component ref="beta" :api-url="betaApiUrl"/>
 
-	<gamma-component :api-url="gammaApiUrl" 
+	<gamma-component ref="gamma" :api-url="gammaApiUrl" 
 	:alfa-api-url="alfaApiUrl"  
-	:beta-api-url="betaApiUrl"/>
+	:beta-api-url="betaApiUrl"
+	@item-created="onGammaItemCreated" />
 
 	<footer>
 		<em><a href="https://github.com/akobashikawa/mse-generico" target="_blank">@GitHub></a></em>
@@ -30,17 +31,29 @@ const App = {
     `,
 
 	setup() {
-		// Obtener la URL base de configuración
 		const apiUrl = config.apiUrl;
 
 		const alfaApiUrl = `${apiUrl}/api/alfa`;
 		const betaApiUrl = `${apiUrl}/api/beta`;
 		const gammaApiUrl = `${apiUrl}/api/gamma`;
 
+		const alfaRef = useTemplateRef('alfa');
+		const betaRef = useTemplateRef('beta');
+		// const gammaRef = useTemplateRef('gamma');
+
+		const onGammaItemCreated = () => {
+			alfaRef.value?.getItems();
+			betaRef.value?.getItems();
+		};
+
+		onMounted(() => {
+		});
+
 		return {
 			alfaApiUrl,
 			betaApiUrl,
 			gammaApiUrl,
+			onGammaItemCreated,
 		}
 	},
 

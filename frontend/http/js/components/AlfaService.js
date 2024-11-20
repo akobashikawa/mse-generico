@@ -19,10 +19,15 @@ export default function AlfaService(apiUrl) {
     await axios.put(`${apiUrl}/${id}`, item);
   };
 
+  const deleteItem = async (id) => {
+    await axios.delete(`${apiUrl}/${id}`);
+  };
+
   return {
     getItems,
     getItem,
     createItem,
     updateItem,
+    deleteItem,
   };
 }
