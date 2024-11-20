@@ -1,11 +1,11 @@
-package com.example.mse.monolito.alfa.infrastructure.nats;
+package com.example.mse.monolito.gamma.infrastructure.nats;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.mse.monolito.alfa.application.AlfaService;
+import com.example.mse.monolito.gamma.application.GammaService;
 import com.example.mse.monolito.nats.NatsEventPublisher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -19,27 +19,36 @@ import io.nats.client.MessageHandler;
 import jakarta.annotation.PostConstruct;
 
 @Component
-public class AlfaEventListener {
+public class GammaEventListener {
 	
 	@Autowired
 	private NatsEventPublisher eventPublisher;
-
+	
 	@Autowired
-    private AlfaService alfaService;
+    private GammaService gammaService;
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	
 	@PostConstruct
 	public void init() throws Exception {
-		System.out.println("alfa escuchando NATS");
-		eventPublisher.subscribe("gamma.created", this::handleGammaCreated);
+		System.out.println("gamma escuchando NATS");
+		eventPublisher.subscribe("alfa.created", this::handleAlfaCreated);
+		eventPublisher.subscribe("beta.created", this::handleBetaCreated);
 	}
 
-	private void handleGammaCreated(Message msg) {
+	private void handleAlfaCreated(Message msg) {
 		try {
 			Map<String, Object> payload = eventPublisher.getPayload(msg);
-			
-			System.out.println("alfa manejando gamma.created: " + payload);
+			System.out.println("gamma manejando alfa.created: " + payload);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleBetaCreated(Message msg) {
+		try {
+			Map<String, Object> payload = eventPublisher.getPayload(msg);
+			System.out.println("gamma manejando beta.created: " + payload);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

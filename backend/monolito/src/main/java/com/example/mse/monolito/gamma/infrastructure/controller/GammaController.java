@@ -2,6 +2,7 @@ package com.example.mse.monolito.gamma.infrastructure.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,8 @@ import com.example.mse.monolito.gamma.domain.Gamma;
 @RequestMapping("/api/gamma")
 public class GammaController {
 	
-	private final GammaService gammaService;
-
-    public GammaController(GammaService gammaService) {
-        this.gammaService = gammaService;
-    }
+	@Autowired
+	private GammaService gammaService;
 
     @GetMapping
     public List<Gamma> getAll() {

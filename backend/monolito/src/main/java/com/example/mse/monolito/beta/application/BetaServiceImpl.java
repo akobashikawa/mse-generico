@@ -1,20 +1,26 @@
 package com.example.mse.monolito.beta.application;
 
-import com.example.mse.monolito.alfa.domain.Alfa;
 import com.example.mse.monolito.beta.domain.Beta;
 import com.example.mse.monolito.beta.infrastructure.repository.BetaDataSource;
 import com.example.mse.monolito.beta.infrastructure.repository.DatabaseBetaDataSource;
 import com.example.mse.monolito.beta.infrastructure.repository.JsonBetaDataSource;
 import com.example.mse.monolito.beta.infrastructure.repository.RestBetaDataSource;
+import com.example.mse.monolito.nats.NatsEventPublisher;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class BetaServiceImpl implements BetaService {
+	
+	@Autowired
+	private NatsEventPublisher eventPublisher;
 
     private final BetaDataSource dataSource;
 
@@ -48,7 +54,17 @@ public class BetaServiceImpl implements BetaService {
     }
 
     public Beta save(Beta beta) {
-        return dataSource.save(beta);
+        Beta savedItem = dataSource.save(beta);
+        
+        // Publicar evento en NATS
+    	Map<String, Object> payload = new HashMap<>();
+    	payload.put("id", savedItem.getId());
+    	payload.put("entero", savedItem.getEntero());
+    	payload.put("decimal", savedItem.getDecimal());
+
+        eventPublisher.publish("beta.created", payload);
+        
+        return savedItem;
     }
 
     public void deleteById(Long id) {

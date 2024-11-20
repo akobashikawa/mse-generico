@@ -5,15 +5,23 @@ import com.example.mse.monolito.alfa.infrastructure.repository.AlfaDataSource;
 import com.example.mse.monolito.alfa.infrastructure.repository.DatabaseAlfaDataSource;
 import com.example.mse.monolito.alfa.infrastructure.repository.JsonAlfaDataSource;
 import com.example.mse.monolito.alfa.infrastructure.repository.RestAlfaDataSource;
+import com.example.mse.monolito.gamma.infrastructure.repository.GammaDataSource;
+import com.example.mse.monolito.nats.NatsEventPublisher;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class AlfaServiceImpl implements AlfaService {
+	
+	@Autowired
+	private NatsEventPublisher eventPublisher;
 
     private final AlfaDataSource dataSource;
 
@@ -47,7 +55,17 @@ public class AlfaServiceImpl implements AlfaService {
     }
 
     public Alfa save(Alfa alfa) {
-        return dataSource.save(alfa);
+        Alfa savedItem = dataSource.save(alfa);
+        
+        // Publicar evento en NATS
+    	Map<String, Object> payload = new HashMap<>();
+    	payload.put("id", savedItem.getId());
+    	payload.put("entero", savedItem.getEntero());
+    	payload.put("decimal", savedItem.getDecimal());
+
+        eventPublisher.publish("alfa.created", payload);
+        
+        return savedItem;
     }
 
     public void deleteById(Long id) {

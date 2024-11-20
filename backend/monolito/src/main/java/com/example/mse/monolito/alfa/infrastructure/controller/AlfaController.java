@@ -2,6 +2,7 @@ package com.example.mse.monolito.alfa.infrastructure.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,8 @@ import com.example.mse.monolito.alfa.domain.Alfa;
 @RequestMapping("/api/alfa")
 public class AlfaController {
 	
-	private final AlfaService alfaService;
-
-    public AlfaController(AlfaService alfaService) {
-        this.alfaService = alfaService;
-    }
+	@Autowired
+	private AlfaService alfaService;
 
     @GetMapping
     public List<Alfa> getAll() {

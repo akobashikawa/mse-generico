@@ -7,6 +7,7 @@ import com.example.mse.monolito.gamma.infrastructure.repository.JsonGammaDataSou
 import com.example.mse.monolito.gamma.infrastructure.repository.RestGammaDataSource;
 import com.example.mse.monolito.nats.NatsEventPublisher;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +19,17 @@ import java.util.Optional;
 @Service
 public class GammaServiceImpl implements GammaService {
 
-    private final GammaDataSource dataSource;
-    private final NatsEventPublisher eventPublisher;
+	@Autowired
+	private NatsEventPublisher eventPublisher;
+
+	private final GammaDataSource dataSource;
 
     public GammaServiceImpl(
         DatabaseGammaDataSource databaseGammaDataSource,
         JsonGammaDataSource jsonGammaDataSource,
         RestGammaDataSource restGammaDataSource,
-        @Value("${gamma.datasource.type:database}") String dataSourceType,
-        NatsEventPublisher eventPublisher
+        @Value("${gamma.datasource.type:database}") String dataSourceType
     ) {
-    	this.eventPublisher = eventPublisher;
-    	
     	switch (dataSourceType) {
 	        case "database":
 	            this.dataSource = databaseGammaDataSource;
@@ -54,19 +54,19 @@ public class GammaServiceImpl implements GammaService {
     }
 
     public Gamma save(Gamma gamma) {
-    	Gamma savedGamma = dataSource.save(gamma);
+    	Gamma savedItem = dataSource.save(gamma);
     	
     	// Publicar evento en NATS
     	Map<String, Object> payload = new HashMap<>();
-    	payload.put("id", savedGamma.getId());
-    	payload.put("entero", savedGamma.getEntero());
-    	payload.put("decimal", savedGamma.getDecimal());
-    	payload.put("alfa_id", savedGamma.getAlfa().getId());
-    	payload.put("beta_id", savedGamma.getBeta().getId());
+    	payload.put("id", savedItem.getId());
+    	payload.put("entero", savedItem.getEntero());
+    	payload.put("decimal", savedItem.getDecimal());
+    	payload.put("alfa_id", savedItem.getAlfa().getId());
+    	payload.put("beta_id", savedItem.getBeta().getId());
 
         eventPublisher.publish("gamma.created", payload);
         
-    	return savedGamma;
+    	return savedItem;
     }
 
     public void deleteById(Long id) {

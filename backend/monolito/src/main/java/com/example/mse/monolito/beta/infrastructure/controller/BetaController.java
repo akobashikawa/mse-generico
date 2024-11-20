@@ -2,6 +2,7 @@ package com.example.mse.monolito.beta.infrastructure.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,8 @@ import com.example.mse.monolito.beta.domain.Beta;
 @RequestMapping("/api/beta")
 public class BetaController {
 	
-	private final BetaService betaService;
-
-    public BetaController(BetaService betaService) {
-        this.betaService = betaService;
-    }
+	@Autowired
+	private BetaService betaService;
 
     @GetMapping
     public List<Beta> getAll() {
